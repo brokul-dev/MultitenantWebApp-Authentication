@@ -4,11 +4,11 @@ using Microsoft.Extensions.Options;
 
 namespace MultitenantWebApp
 {
-    public class CookieOptionsProvider : IOptionsMonitor<CookieAuthenticationOptions>
+    public class CookieOptionsMonitor : IOptionsMonitor<CookieAuthenticationOptions>
     {
         private readonly IOptionsFactory<CookieAuthenticationOptions> _optionsFactory;
 
-        public CookieOptionsProvider(IOptionsFactory<CookieAuthenticationOptions> optionsFactory)
+        public CookieOptionsMonitor(IOptionsFactory<CookieAuthenticationOptions> optionsFactory)
         {
             _optionsFactory = optionsFactory;
         }

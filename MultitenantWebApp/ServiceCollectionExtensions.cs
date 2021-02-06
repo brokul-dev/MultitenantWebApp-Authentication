@@ -30,7 +30,7 @@ namespace MultitenantWebApp
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             }).AddCookie(options =>
             {
-                //options.Cookie.Path = "/";
+                options.Cookie.Path = "/";
             });
 
             services.AddPerRequestCookieOptions((options, httpContext) =>
@@ -42,6 +42,7 @@ namespace MultitenantWebApp
                 options.DataProtectionProvider = httpContext
                     .RequestServices.GetRequiredService<IDataProtectionProvider>()
                     .CreateProtector(tenant.Name);
+                options.Cookie.Name = $"{tenant.Name}-Cookie";
             });
 
             return services;
@@ -51,8 +52,8 @@ namespace MultitenantWebApp
             this IServiceCollection services,
             Action<CookieAuthenticationOptions, HttpContext> configAction)
         {
-            services.AddScoped<IOptionsMonitor<CookieAuthenticationOptions>, CookieOptionsProvider>();
-            services.AddScoped<IConfigureOptions<CookieAuthenticationOptions>, CookieOptionsInitializer>();
+            services.AddSingleton<IOptionsMonitor<CookieAuthenticationOptions>, CookieOptionsMonitor>();
+            services.AddSingleton<IConfigureOptions<CookieAuthenticationOptions>, CookieConfigureNamedOptions>();
             services.AddSingleton(new CookieOptionsConfigurator(configAction));
         }
     }
