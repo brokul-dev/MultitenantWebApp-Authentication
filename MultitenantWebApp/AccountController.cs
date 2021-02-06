@@ -34,9 +34,13 @@ namespace MultitenantWebApp
                 new("UserName", viewModel.UserName)
             };
 
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var identity = new ClaimsIdentity(
+                claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
             var claimsPrincipal = new ClaimsPrincipal(identity);
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
 
             return Redirect(viewModel.ReturnUrl ?? $"/{_tenantContext.CurrentTenant.Name}");
         }

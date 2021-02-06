@@ -5,22 +5,25 @@ using Microsoft.Extensions.Options;
 
 namespace MultitenantWebApp
 {
-    public class CookieConfigureNamedOptions : IConfigureNamedOptions<CookieAuthenticationOptions>
+    public class CookieConfigureNamedOptions 
+        : IConfigureNamedOptions<CookieAuthenticationOptions>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly CookieOptionsConfigurator _optionsConfigurator;
+        private readonly Action<CookieAuthenticationOptions, HttpContext> _configureAction;
 
         public CookieConfigureNamedOptions(
-            IHttpContextAccessor httpContextAccessor, 
-            CookieOptionsConfigurator optionsConfigurator)
+            IHttpContextAccessor httpContextAccessor,
+            Action<CookieAuthenticationOptions, HttpContext> configureAction)
         {
             _httpContextAccessor = httpContextAccessor;
-            _optionsConfigurator = optionsConfigurator;
+            _configureAction = configureAction;
         }
 
         public void Configure(string name, CookieAuthenticationOptions options)
         {
-            if (!string.Equals(name, CookieAuthenticationDefaults.AuthenticationScheme, StringComparison.Ordinal))
+            if (!string.Equals(name, 
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                StringComparison.Ordinal))
             {
                 return;
             }
@@ -30,7 +33,7 @@ namespace MultitenantWebApp
                 throw new ArgumentNullException(nameof(IHttpContextAccessor.HttpContext));
             }
 
-            _optionsConfigurator.Run(options, _httpContextAccessor.HttpContext);
+            _configureAction(options, _httpContextAccessor.HttpContext);
         }
 
         public void Configure(CookieAuthenticationOptions options) 
