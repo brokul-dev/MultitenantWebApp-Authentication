@@ -38,10 +38,9 @@ namespace MultitenantWebApp
 
                 options.DataProtectionProvider = httpContext
                     .RequestServices.GetRequiredService<IDataProtectionProvider>()
-                    .CreateProtector(tenant.Name);
+                    .CreateProtector($"App.Tenants.{tenant.Name}");
 
                 options.Cookie.Name = $"{tenant.Name}-Cookie";
-                options.Cookie.Path = $"/{tenant.Name}";
             });
 
             return services;
