@@ -15,8 +15,8 @@ namespace MultitenantWebApp
             IHttpContextAccessor httpContextAccessor,
             Action<CookieAuthenticationOptions, HttpContext> configureAction)
         {
-            _httpContextAccessor = httpContextAccessor;
-            _configureAction = configureAction;
+            _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+            _configureAction = configureAction ?? throw new ArgumentNullException(nameof(configureAction));
         }
 
         public void Configure(string name, CookieAuthenticationOptions options)
@@ -30,13 +30,13 @@ namespace MultitenantWebApp
 
             if (_httpContextAccessor?.HttpContext == null)
             {
-                throw new ArgumentNullException(nameof(IHttpContextAccessor.HttpContext));
+                throw new InvalidOperationException("HttpContext is not available.");
             }
 
             _configureAction(options, _httpContextAccessor.HttpContext);
         }
 
-        public void Configure(CookieAuthenticationOptions options) 
-            => throw new NotImplementedException();
+        public void Configure(CookieAuthenticationOptions options)
+            => Configure(Options.DefaultName, options);
     }
 }
